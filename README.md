@@ -1,9 +1,9 @@
-# 📊 ML Data Explorer
+#  ML Data Explorer
 
 A **Streamlit-based interactive tool** for exploring, cleaning, and preparing datasets, built for **machine learning enthusiasts** who want to clearly understand their data before modeling.
 
 
-## 🚀 Key Features
+##  Key Features
 
 - **Dataset Overview**
   - Shape, data types, missing values

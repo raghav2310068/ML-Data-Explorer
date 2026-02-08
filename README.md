@@ -38,5 +38,3 @@ A **Streamlit-based interactive tool** for exploring, cleaning, and preparing da
   - Download final processed dataset as CSV
 
 
-## 🧱 Project Structure
-

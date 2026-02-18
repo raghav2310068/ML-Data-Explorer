@@ -9,33 +9,21 @@ from core.encoding import Encoder
 from core.text_processing import TextProcessor
 from core.exporter import Exporter
 
-# --------------------------------------------------
-# PAGE CONFIG
-# --------------------------------------------------
 st.set_page_config(page_title="ML Data Explorer", layout="wide")
 st.title("📊 ML Data Explorer")
 st.caption("Understand, preprocess, and analyze your data step by step")
 
-# --------------------------------------------------
-# SESSION STATE INIT
-# --------------------------------------------------
 if "df" not in st.session_state:
     st.session_state.df = None
 
 if "dataset_loaded" not in st.session_state:
     st.session_state.dataset_loaded = False
 
-# --------------------------------------------------
-# HELPER: SHOW UPDATED DATASET
-# --------------------------------------------------
 def show_updated_dataset(title="Updated Dataset Preview"):
     with st.expander(title, expanded=True):
         st.caption("This is the current state of your dataset after the last operation.")
         st.dataframe(st.session_state.df, use_container_width=True)
 
-# --------------------------------------------------
-# SIDEBAR – DATASET UPLOAD
-# --------------------------------------------------
 st.sidebar.header("⚙️ Input Panel")
 
 uploaded_file = st.sidebar.file_uploader(
@@ -44,23 +32,18 @@ uploaded_file = st.sidebar.file_uploader(
     key="file_uploader"
 )
 
-# Load dataset once
 if uploaded_file and not st.session_state.dataset_loaded:
     loader = DataLoader()
     st.session_state.df = loader.load_csv(uploaded_file)
     st.session_state.dataset_loaded = True
     st.sidebar.success("Dataset loaded successfully")
 
-# Explicit reload
 if uploaded_file and st.session_state.dataset_loaded:
     if st.sidebar.button("🔄 Reload Dataset", key="reload_dataset"):
         loader = DataLoader()
         st.session_state.df = loader.load_csv(uploaded_file)
         st.sidebar.success("Dataset reloaded successfully")
 
-# --------------------------------------------------
-# MAIN GUARD
-# --------------------------------------------------
 if st.session_state.df is None:
     st.info("👈 Upload a dataset to begin")
     st.stop()
@@ -74,9 +57,6 @@ tabs = st.tabs([
     "💾 Export"
 ])
 
-# --------------------------------------------------
-# TAB 1: OVERVIEW
-# --------------------------------------------------
 with tabs[0]:
     st.subheader("Dataset Overview")
 
@@ -97,9 +77,6 @@ with tabs[0]:
 
     show_updated_dataset("Current Dataset")
 
-# --------------------------------------------------
-# TAB 2: EDA
-# --------------------------------------------------
 with tabs[1]:
     st.subheader("Exploratory Data Analysis")
     st.info("Analyze univariate, bivariate, and multivariate relationships.")
@@ -110,7 +87,6 @@ with tabs[1]:
     numeric_cols = df_current.select_dtypes(include="number").columns.tolist()
     categorical_cols = df_current.select_dtypes(include="object").columns.tolist()
 
-    # ---------- UNIVARIATE ----------
     st.markdown("### Univariate Analysis")
     uni_col = st.selectbox("Select column", df_current.columns, key="uni_col")
 
@@ -121,7 +97,6 @@ with tabs[1]:
 
     st.divider()
 
-    # ---------- BIVARIATE ----------
     st.markdown("### Bivariate Analysis")
     bivar_type = st.selectbox(
         "Relationship type",
@@ -157,16 +132,12 @@ with tabs[1]:
     st.markdown("### Multivariate Analysis")
     st.pyplot(eda.correlation_heatmap())
 
-# --------------------------------------------------
-# TAB 3: CLEANING, ROW & COLUMN REMOVAL
-# --------------------------------------------------
 with tabs[2]:
     st.subheader("Data Cleaning & Column Management")
 
     df_current = st.session_state.df
     prep = Preprocessing(df_current)
 
-    # ----- Missing Values -----
     st.markdown("### 🩹 Fill Missing Values")
     na_col = st.selectbox("Select column", df_current.columns, key="na_col")
 
@@ -182,7 +153,6 @@ with tabs[2]:
 
     st.divider()
 
-    # ----- Remove Rows with Null Values -----
     st.markdown("### 🧹 Remove Rows with Missing Values")
     st.info("Permanently remove rows based on missing-value conditions.")
 
@@ -339,3 +309,4 @@ with tabs[5]:
         "text/csv",
         key="download_csv"
     )
+
